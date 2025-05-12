@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import OrderedCollections
 
 protocol RuntimeValue {
     associatedtype ValueType
@@ -116,7 +115,9 @@ class ObjectValue: RuntimeValue, Sequence {
             return (key, value)
         }
 
-        self.storage = OrderedDictionary(uniqueKeysWithValues: processedPairs)
+        self.storage = OrderedDictionary(processedPairs) { old, new in
+            new
+        }
         self.builtins = [
             "get": FunctionValue(value: { args, _ in
                 guard let key = args[0] as? StringValue else {
